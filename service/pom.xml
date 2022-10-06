@@ -11,6 +11,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>service_hosp</module>
+        <module>service_cmn</module>
     </modules>
 
     <artifactId>service</artifactId>
