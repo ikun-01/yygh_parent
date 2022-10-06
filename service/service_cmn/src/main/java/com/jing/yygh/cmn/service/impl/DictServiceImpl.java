@@ -65,7 +65,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
             // 指示响应内容以附件形式下载
             response.setHeader("Content-disposition", "attachment;filename="+ fileName + ".xlsx");
 
-            List<Dict> dictList = baseMapper.selectList(null);
+            List<Dict> dictList = dictMapper.selectList(null);
 
             List<DictEeVo> dictVoList = new ArrayList<>(dictList.size());
 

@@ -40,7 +40,7 @@ public class DictController {
     }
 
     @ApiOperation(value = "导入")
-    @PostMapping("importData")
+    @PostMapping("/importData")
     public R importData(MultipartFile file) {
         dictService.importDictData(file);
         return R.ok();
