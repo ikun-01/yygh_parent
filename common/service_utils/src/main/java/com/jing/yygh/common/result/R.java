@@ -21,17 +21,17 @@ public class R {
 
     public static R ok(){
         R r = new R();
-        r.setCode(ResultCodeEnum.SUCCESS.getCode());
+        r.setCode(ResultCode.SUCCESS);
         r.setSuccess(true);
-        r.setMessage(ResultCodeEnum.SUCCESS.getMessage());
+        r.setMessage("操作成功");
         return r;
     }
 
     public static R error(){
         R r = new R();
-        r.setCode(ResultCodeEnum.ERROR.getCode());
+        r.setCode(ResultCode.ERROR);
         r.setSuccess(false);
-        r.setMessage(ResultCodeEnum.ERROR.getMessage());
+        r.setMessage("操作失败");
         return r;
     }
 

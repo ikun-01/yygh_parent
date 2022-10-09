@@ -18,6 +18,11 @@ spring:
     username: root
     password: 131421
 
+  #配置mongodb
+  data:
+    mongodb:
+      uri: mongodb://192.168.11.11:27017/yygh
+
 
   #返回json的全局时间格式
   jackson:
