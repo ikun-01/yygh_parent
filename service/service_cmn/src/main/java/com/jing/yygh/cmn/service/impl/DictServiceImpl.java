@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -89,6 +90,34 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String getNameByParentDictCodeAndValue(String dictCode, String value) {
+        // 查询条件
+        QueryWrapper<Dict> query = new QueryWrapper<>();
+
+        if (StringUtils.isEmpty(dictCode)){
+            //查询省市时 不需要字典编码
+            query.eq("value",value);
+            Dict dict = dictMapper.selectOne(query);
+            return dict.getName();
+        }
+        query.eq("parent_id",this.getDict(dictCode).getId()).eq("value",value);
+        Dict dict = dictMapper.selectOne(query);
+        return dict.getName();
+
+    }
+
+    /**
+     * 根据 dictCode查询当前字典数据信息
+     * @param dictCode
+     * @return
+     */
+    private Dict getDict(String dictCode){
+        QueryWrapper<Dict> query = new QueryWrapper<>();
+        query.eq("dict_code",dictCode);
+        return dictMapper.selectOne(query);
     }
 
 

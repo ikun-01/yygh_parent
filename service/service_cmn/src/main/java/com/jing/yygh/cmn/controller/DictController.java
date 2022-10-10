@@ -45,4 +45,16 @@ public class DictController {
         dictService.importDictData(file);
         return R.ok();
     }
+
+    @ApiOperation("查询医院等级名称")
+    @GetMapping("/getName/{parentDictCode}/{value}")
+    public String getName(@PathVariable("parentDictCode") String parentDictCode,@PathVariable("value") String value){
+        return dictService.getNameByParentDictCodeAndValue(parentDictCode, value);
+    }
+
+    @ApiOperation("查询省市区名称")
+    @GetMapping("/getName/{value}")
+    public String getName(@PathVariable("value") String value){
+        return dictService.getNameByParentDictCodeAndValue("", value);
+    }
 }
