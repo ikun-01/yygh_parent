@@ -4,6 +4,8 @@ import com.jing.yygh.model.hosp.Hospital;
 import com.jing.yygh.vo.hosp.HospitalQueryVo;
 import org.springframework.data.domain.Page;
 
+import java.util.Map;
+
 public interface HospitalService {
     //第三方医院调用,实现上传医院信息
     void save(Hospital hospital);
@@ -11,4 +13,10 @@ public interface HospitalService {
     Hospital getByHoscode(String hoscode);
     // 带条件的分页查询,后台管理系统使用
     Page<Hospital> selectPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo);
+
+    // 更新医院状态
+    void updateStatus(String id,Integer status);
+
+    // 查看医院详细信息
+    Map<String,Object> show(String id);
 }

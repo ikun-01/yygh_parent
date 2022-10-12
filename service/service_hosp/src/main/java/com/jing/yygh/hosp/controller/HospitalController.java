@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Api(description = "后台管理医院列列表接口")
 @RestController
-@CrossOrigin//跨域请求
+//@CrossOrigin//跨域请求
 @RequestMapping("/admin/hosp/hospital")
 public class HospitalController {
     @Autowired
@@ -23,5 +25,19 @@ public class HospitalController {
     public R index(@PathVariable("page") Integer page,@PathVariable("limit") Integer limit, HospitalQueryVo hospitalQueryVo){
         Page<Hospital> pages = hospitalService.selectPage(page, limit, hospitalQueryVo);
         return R.ok().data("pages",pages);
+    }
+
+    @PutMapping("/updateStatus/{id}/{status}")
+    @ApiOperation("更新医院状态信息")
+    public R updateStatus(@PathVariable("id") String id,@PathVariable("status") Integer status){
+        hospitalService.updateStatus(id,status);
+        return R.ok();
+    }
+
+    @GetMapping("/show/{id}")
+    @ApiOperation("查看医院详情")
+    public R show(@PathVariable("id") String id){
+        Map<String, Object> hospital = hospitalService.show(id);
+        return R.ok().data("hospital",hospital);
     }
 }

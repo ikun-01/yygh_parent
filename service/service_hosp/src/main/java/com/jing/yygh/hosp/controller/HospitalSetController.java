@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@CrossOrigin//解决跨域请求
+//@CrossOrigin//解决跨域请求
 @RequestMapping("/admin/hosp/hospitalSet")
 @Api(description = "医院设置接口")
 public class HospitalSetController {

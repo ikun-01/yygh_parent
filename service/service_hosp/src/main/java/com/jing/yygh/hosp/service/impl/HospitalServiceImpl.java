@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class HospitalServiceImpl implements HospitalService {
@@ -80,6 +82,47 @@ public class HospitalServiceImpl implements HospitalService {
     }
 
     /**
+     * 修改医院状态信息
+     * @param id
+     * @param status
+     */
+    @Override
+    public void updateStatus(String id, Integer status) {
+        if (StringUtils.isEmpty(id)){
+            throw new YyghException(20001,"id为null");
+        }
+        if (status.intValue()!=0 && status.intValue()!=1){
+            throw new YyghException(20001,"状态错误");
+        }
+        Hospital hospital = hospitalRepository.findById(id).get();
+        hospital.setStatus(status);
+        hospital.setUpdateTime(new Date());
+        hospitalRepository.save(hospital);
+    }
+
+    /**
+     * 查看医院详细信息
+     * @param id
+     * @return
+     */
+    @Override
+    public Map<String, Object> show(String id) {
+        if (StringUtils.isEmpty(id)){
+            throw new YyghException(20001,"id为null");
+        }
+        HashMap<String, Object> map = new HashMap<>();
+        Hospital hospital = hospitalRepository.findById(id).get();
+        this.packHospital(hospital);
+        //医院基本信息
+        map.put("hospital",hospital);
+        //预约规则
+        map.put("bookingRule",hospital.getBookingRule());
+
+        return map;
+    }
+
+
+    /**
      *  封装 医院的其他参数
      * @param hospital
      * @return
@@ -98,4 +141,5 @@ public class HospitalServiceImpl implements HospitalService {
         hospital.getParam().put("fullAddress",fullAddress);
         return hospital;
     }
+
 }

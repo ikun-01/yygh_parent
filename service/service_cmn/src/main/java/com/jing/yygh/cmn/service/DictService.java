@@ -30,4 +30,11 @@ public interface DictService extends IService<Dict> {
      */
     String getNameByParentDictCodeAndValue(String dictCode,String value);
 
+    /**
+     * 通过字典编码查找省市信息
+     * @param dictCode
+     * @return
+     */
+    List<Dict> findByDictCode(String dictCode);
+
 }

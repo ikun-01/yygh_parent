@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jing.yygh.cmn.listener.DictListener;
 import com.jing.yygh.cmn.mapper.DictMapper;
 import com.jing.yygh.cmn.service.DictService;
+import com.jing.yygh.common.exception.YyghException;
 import com.jing.yygh.model.cmn.Dict;
 import com.jing.yygh.vo.cmn.DictEeVo;
 import org.springframework.beans.BeanUtils;
@@ -107,6 +108,17 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         Dict dict = dictMapper.selectOne(query);
         return dict.getName();
 
+    }
+
+    @Override
+    public List<Dict> findByDictCode(String dictCode) {
+        if (StringUtils.isEmpty(dictCode)) {
+            throw new YyghException(20001,"字典编码不能为空");
+        }
+        //获取Province的id
+        Long id = this.getDict(dictCode).getId();
+        //查找所有的省
+        return this.findChildData(id);
     }
 
     /**

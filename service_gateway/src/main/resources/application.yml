@@ -1,0 +1,31 @@
+#服务端口
+server:
+  port: 80
+
+
+spring:
+  application:
+    #服务名称
+    name: service-gateway
+  cloud:
+
+    gateway:
+      discovery:
+        locator:
+          #使用服务发现路由
+          enabled: true
+      routes:
+        - id: service-hosp
+          uri: lb://service-hosp
+          predicates:
+              - Path=/*/hosp/**
+        - id: service-cmn
+          uri: lb://service-cmn
+          predicates:
+              - Path=/*/cmn/**
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+
+
+

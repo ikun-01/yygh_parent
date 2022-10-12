@@ -15,7 +15,7 @@ import java.util.List;
 @Api(description = "数据字典接口")
 @RestController
 @RequestMapping("/admin/cmn/dict")
-@CrossOrigin//跨域
+//@CrossOrigin//跨域
 public class DictController {
     @Autowired
     private DictService dictService;
@@ -57,4 +57,12 @@ public class DictController {
     public String getName(@PathVariable("value") String value){
         return dictService.getNameByParentDictCodeAndValue("", value);
     }
+
+    @ApiOperation("查找所有的省")
+    @GetMapping("/findByDictCode/{dictCode}")
+    public R findByDictCode(@PathVariable("dictCode") String dictCode){
+        List<Dict> list = dictService.findByDictCode(dictCode);
+        return R.ok().data("list",list);
+    }
+
 }

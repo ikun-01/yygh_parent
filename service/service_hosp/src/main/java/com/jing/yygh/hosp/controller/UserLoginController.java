@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/hosp")
-@CrossOrigin  //跨域
+//@CrossOrigin  //跨域
 public class UserLoginController {
     //登录
     @PostMapping("/user/login")
