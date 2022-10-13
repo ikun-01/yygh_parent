@@ -1,5 +1,6 @@
 package com.jing.yygh.hosp.mongo;
 
+import com.jing.yygh.hosp.service.ScheduleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,8 @@ public class mongoTest {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private ScheduleService scheduleService;
     @Test
     public void test1(){
         User user = new User();
@@ -26,5 +29,10 @@ public class mongoTest {
         user.setCreateDate(new Date().toString());
         user = mongoTemplate.insert(user);
         System.out.println(user);
+    }
+
+    @Test
+    public void groupTest(){
+        scheduleService.getScheduleRule(0L,0L,"10000","200040878");
     }
 }

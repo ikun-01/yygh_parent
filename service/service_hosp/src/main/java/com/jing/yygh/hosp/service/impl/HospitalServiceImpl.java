@@ -130,7 +130,7 @@ public class HospitalServiceImpl implements HospitalService {
     private Hospital packHospital(Hospital hospital){
         // 医院类型名称
         String hosTypeName = dictFeignClient.getName("hostype", hospital.getHostype());
-        hospital.getParam().put("hosTypeName",hosTypeName);
+        hospital.getParam().put("hosType",hosTypeName);
         //市
         String cityName = dictFeignClient.getName(hospital.getCityCode());
         //省
