@@ -119,6 +119,8 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     }
 
 
+
+    // 封装返回结果,生成token
     private Map<String,Object> get(UserInfo userInfo){
         HashMap<String, Object> map = new HashMap<>();
         // 用户名为空

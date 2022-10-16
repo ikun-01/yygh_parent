@@ -8,6 +8,8 @@ import com.jing.yygh.model.user.UserInfo;
 import com.jing.yygh.user.service.UserInfoService;
 import com.jing.yygh.user.utils.ConstantPropertiesUtil;
 import com.jing.yygh.user.utils.HttpClientUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -23,6 +25,7 @@ import java.util.Map;
 
 @Controller // 进行视图跳转 回调不返回json
 @RequestMapping("/api/user/wx")
+@Api(description = "微信登录接口")
 public class WxApiController {
 
     @Autowired
@@ -31,6 +34,7 @@ public class WxApiController {
     // 获取微信登录参数
     @GetMapping("/getLoginParam")
     @ResponseBody
+    @ApiOperation("获取微信登录参数返回前端生成二维码")
     public R getLoginParam(){
         Map<String, Object> map = new HashMap<>();
         try {
@@ -46,6 +50,7 @@ public class WxApiController {
     }
 
     @GetMapping("/callback")
+    @ApiOperation("微信扫码授权后执行回调,保存用户信息")
     public String callback(String code){
 
         // 通过code 来获取 access_token  + open_id
