@@ -1,0 +1,20 @@
+server:
+  port: 8204
+
+spring:
+  application:
+    name: service-msm
+
+  redis:
+    host: 192.168.11.11
+    port: 6666
+
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8

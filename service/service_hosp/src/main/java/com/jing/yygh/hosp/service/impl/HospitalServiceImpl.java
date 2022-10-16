@@ -4,6 +4,7 @@ import com.jing.yygh.cmn.client.DictFeignClient;
 import com.jing.yygh.common.exception.YyghException;
 import com.jing.yygh.hosp.repository.HospitalRepository;
 import com.jing.yygh.hosp.service.HospitalService;
+import com.jing.yygh.model.hosp.BookingRule;
 import com.jing.yygh.model.hosp.Hospital;
 import com.jing.yygh.vo.hosp.HospitalQueryVo;
 import org.springframework.beans.BeanUtils;
@@ -14,6 +15,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -118,6 +120,26 @@ public class HospitalServiceImpl implements HospitalService {
         //预约规则
         map.put("bookingRule",hospital.getBookingRule());
 
+        return map;
+    }
+
+    @Override
+    public List<Hospital> findByName(String hosname) {
+        if (StringUtils.isEmpty(hosname)){
+            throw new YyghException(20001,"医院名称为空");
+        }
+        return hospitalRepository.findByHosnameLike(hosname);
+    }
+
+    //获取医院的详细信息
+    @Override
+    public Map<String, Object> item(String hoscode) {
+        Map<String, Object> map = new HashMap<>();
+        Hospital hospital = this.getByHoscode(hoscode);
+        this.packHospital(hospital);
+        BookingRule bookingRule = hospital.getBookingRule();
+        map.put("hospital",hospital);
+        map.put("bookingRule",bookingRule);
         return map;
     }
 
