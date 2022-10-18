@@ -1,0 +1,30 @@
+server:
+  port: 8205
+
+spring:
+  application:
+    name: service-oss
+
+  profiles:
+    active: dev
+
+
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+
+#阿里云 对象存储
+aliyun:
+  oss:
+    file:
+      endpoint: oss-cn-hangzhou.aliyuncs.com
+      keyid: LTAI5tL2tgDM2NjV7QpiVVzg
+      keysecret: ynRFtyy79QeYfVTqYfaQehMJbu9UoN
+      bucketname: bucket-yygh-1

@@ -1,13 +1,20 @@
 package com.jing.yygh.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jing.yygh.common.exception.YyghException;
 import com.jing.yygh.common.utils.JwtHelper;
+import com.jing.yygh.enums.AuthStatusEnum;
+import com.jing.yygh.model.user.Patient;
 import com.jing.yygh.model.user.UserInfo;
 import com.jing.yygh.user.mapper.UserInfoMapper;
+import com.jing.yygh.user.service.PatientService;
 import com.jing.yygh.user.service.UserInfoService;
 import com.jing.yygh.vo.user.LoginVo;
+import com.jing.yygh.vo.user.UserAuthVo;
+import com.jing.yygh.vo.user.UserInfoQueryVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -15,6 +22,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -23,6 +31,9 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     private UserInfoMapper userInfoMapper;
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
+
+    @Autowired
+    private PatientService patientService;
     @Override
     public Map<String, Object> login(LoginVo loginVo) {
         if (loginVo == null){
@@ -118,6 +129,128 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         return userInfoMapper.selectOne(queryWrapper);
     }
 
+    @Override
+    public void userAuth(Long id, UserAuthVo userAuthVo) {
+        UserInfo userInfo = userInfoMapper.selectById(id);
+        if (userInfo == null){
+            throw new YyghException(20001,"用户不存在");
+        }
+        if (userAuthVo == null){
+            throw new YyghException(20001,"用户数据为null");
+        }
+        userInfo.setName(userAuthVo.getName());
+        userInfo.setCertificatesType(userAuthVo.getCertificatesType());
+        userInfo.setCertificatesNo(userAuthVo.getCertificatesNo());
+        userInfo.setCertificatesUrl(userAuthVo.getCertificatesUrl());
+        // 修改认证状态为认证中
+        userInfo.setAuthStatus(AuthStatusEnum.AUTH_RUN.getStatus());
+        userInfoMapper.updateById(userInfo);
+    }
+
+    @Override
+    public UserInfo getUserInfo(Long userId) {
+        UserInfo userInfo = userInfoMapper.selectById(userId);
+        if (userInfo == null){
+            throw new YyghException(20001,"用户不存在");
+        }
+        // 设置 认证状态 0：未认证 1：认证中 2：认证成功 -1：认证失败
+        String authStatusString = AuthStatusEnum.getStatusNameByStatus(userInfo.getAuthStatus());
+
+//        AuthStatusEnum[] values = AuthStatusEnum.values();
+//        // 遍历状态枚举集合 获取name
+//        for (AuthStatusEnum value : values) {
+//            if (value.getStatus().intValue() == userInfo.getStatus().intValue()){
+//                authStatusString = value.getName();
+//            }
+//        }
+        userInfo.getParam().put("authStatusString",authStatusString);
+        return userInfo;
+    }
+
+    @Override
+    public IPage<UserInfo> selectPage(Page<UserInfo> pageParam, UserInfoQueryVo userInfoQueryVo) {
+        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
+        if (userInfoQueryVo == null) {
+            Page<UserInfo> result = userInfoMapper.selectPage(pageParam, queryWrapper);
+            result.getRecords().forEach(userInfo -> {
+                pack(userInfo);
+            });
+            return result;
+        }
+        if (!StringUtils.isEmpty(userInfoQueryVo.getKeyword())) {
+            queryWrapper.like("name",userInfoQueryVo.getKeyword());
+        }
+        if (!StringUtils.isEmpty(userInfoQueryVo.getStatus())) {
+            queryWrapper.like("status",userInfoQueryVo.getStatus());
+        }
+        if (!StringUtils.isEmpty(userInfoQueryVo.getAuthStatus())) {
+            queryWrapper.eq("auth_status",userInfoQueryVo.getAuthStatus());
+        }
+        if (!StringUtils.isEmpty(userInfoQueryVo.getCreateTimeBegin())) {
+            queryWrapper.ge("create_time",userInfoQueryVo.getCreateTimeBegin());
+        }
+        if (!StringUtils.isEmpty(userInfoQueryVo.getCreateTimeEnd())) {
+            queryWrapper.le("create_time",userInfoQueryVo.getCreateTimeEnd());
+        }
+        // 调用分页查询
+        Page<UserInfo> userInfoPage = userInfoMapper.selectPage(pageParam, queryWrapper);
+        // 封装参数
+        userInfoPage.getRecords().forEach(userInfo -> {
+            pack(userInfo);
+        });
+
+        return userInfoPage;
+    }
+
+    @Override
+    public void lock(Long id, Integer status) {
+        if (status.intValue() != 1 && status.intValue() != 0){
+            throw new YyghException(20001,"状态信息只能为0或1");
+        }
+        UserInfo userInfo = userInfoMapper.selectById(id);
+        if (userInfo == null){
+            throw new YyghException(20001,"用户不存在");
+        }
+        userInfo.setStatus(status);
+        userInfoMapper.updateById(userInfo);
+    }
+
+    @Override
+    public Map<String, Object> show(Long userId) {
+
+        UserInfo userInfo = userInfoMapper.selectById(userId);
+        if (userInfo == null){
+            throw new YyghException(20001,"用户信息不存在");
+        }
+        HashMap<String, Object> map = new HashMap<>();
+        pack(userInfo);
+        map.put("userInfo",userInfo);
+
+        // 查询所有的就诊人
+        List<Patient> list = patientService.findListByUserId(userInfo.getId());
+        map.put("patientList",list);
+
+        return map;
+    }
+
+    @Override
+    public void approval(Long userId, Integer authStatus) {
+        if (authStatus == 2 || authStatus == -1){
+            UserInfo userInfo = userInfoMapper.selectById(userId);
+            if (userInfo == null){
+                throw new YyghException(20001,"用户信息不存在");
+            }
+            userInfo.setAuthStatus(authStatus);
+            userInfoMapper.updateById(userInfo);
+        }
+    }
+
+    private void pack(UserInfo userInfo) {
+        Integer status = userInfo.getStatus();
+        Integer authStatus = userInfo.getAuthStatus();
+        userInfo.getParam().put("statusString",status.intValue() == 0 ? "锁定" : "正常");
+        userInfo.getParam().put("authStatusString",AuthStatusEnum.getStatusNameByStatus(authStatus));
+    }
 
 
     // 封装返回结果,生成token
