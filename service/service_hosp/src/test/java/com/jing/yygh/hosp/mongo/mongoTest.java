@@ -35,4 +35,9 @@ public class mongoTest {
     public void groupTest(){
         scheduleService.getScheduleRule(0L,0L,"10000","200040878");
     }
+
+    @Test
+    public void getBookingScheduleRule(){
+        scheduleService.getBookingScheduleRule(1,7,"10000","200040878");
+    }
 }

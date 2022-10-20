@@ -42,7 +42,7 @@ public class PatientController {
     //根据id获取就诊人信息
     @GetMapping("/auth/get/{id}")
     @ApiOperation("根据id获取就诊人信息")
-    public R getPatientById(@PathVariable Long id){
+    public R getPatient(@PathVariable Long id){
         Patient patient = patientService.getPatientById(id);
         return R.ok().data("patient",patient);
     }
@@ -61,6 +61,12 @@ public class PatientController {
     public R remove(@PathVariable("id") Long id){
         boolean remove = patientService.removeById(id);
         return remove ? R.ok() : R.error();
+    }
+
+    @ApiOperation("对订单系统使用获取就诊人信息")
+    @GetMapping("/inner/get/{id}")
+    public Patient getPatientById( @PathVariable("id") Long id) {
+        return patientService.getPatientById(id);
     }
 
 

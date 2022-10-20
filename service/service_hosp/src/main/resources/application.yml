@@ -36,6 +36,13 @@ spring:
       discovery:
         server-addr: 127.0.0.1:8848
 
+  # 配置rabbit
+  rabbitmq:
+    host: 192.168.11.11
+    port: 5672
+    username: guest
+    password: guest
+
 #mybatis日志
 mybatis-plus:
   configuration:
