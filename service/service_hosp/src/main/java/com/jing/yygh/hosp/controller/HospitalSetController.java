@@ -113,6 +113,12 @@ public class HospitalSetController {
     @ApiOperation("设置医院信息")
     @PostMapping("/saveHospSet")
     public R save(@RequestBody HospitalSet hospitalSet){
+        QueryWrapper<HospitalSet> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("hoscode",hospitalSet.getHoscode());
+        int count = hospitalSetService.count(queryWrapper);
+        if (count > 0){
+            throw new YyghException(20001,"医院编号重复");
+        }
         hospitalSet.setStatus(1);
         hospitalSetService.save(hospitalSet);
         return R.ok();
