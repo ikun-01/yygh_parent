@@ -32,20 +32,31 @@ public class HospitalReceiver {
             exchange = @Exchange(value = MqConst.EXCHANGE_DIRECT_ORDER)
             ,key = MqConst.ROUTING_ORDER))
     public void receiver(OrderMqVo orderMqVo){
-        // 从消息 队列中拿到消息 获取消息中的值
-        Integer reservedNumber = orderMqVo.getReservedNumber();
-        Integer availableNumber = orderMqVo.getAvailableNumber();
-        String scheduleId = orderMqVo.getScheduleId();
-        // 从mongo中查询排班
-        Schedule schedule = scheduleService.getById(scheduleId);
-        schedule.setAvailableNumber(availableNumber);
-        schedule.setReservedNumber(reservedNumber);
-        // 更新mongo中的信息
-        scheduleService.update(schedule);
+
+        if (orderMqVo.getAvailableNumber() != null){
+            // 创建订单
+            // 从消息 队列中拿到消息 获取消息中的值
+            Integer reservedNumber = orderMqVo.getReservedNumber();
+            Integer availableNumber = orderMqVo.getAvailableNumber();
+            String scheduleId = orderMqVo.getScheduleId();
+            // 从mongo中查询排班
+            Schedule schedule = scheduleService.getById(scheduleId);
+            schedule.setAvailableNumber(availableNumber);
+            schedule.setReservedNumber(reservedNumber);
+            // 更新mongo中的信息
+            scheduleService.update(schedule);
+        }else {
+            // 取消订单
+            String scheduleId = orderMqVo.getScheduleId();
+            Schedule schedule = scheduleService.getById(scheduleId);
+            schedule.setAvailableNumber(schedule.getAvailableNumber() + 1); // 剩余预约数 +1
+            scheduleService.update(schedule);
+        }
+        // 发送短信
         MsmVo msmVo = orderMqVo.getMsmVo();
         if (msmVo != null){
-            // 向第二个消息队列中发送数据
             rabbitService.sendMessage(MqConst.EXCHANGE_DIRECT_MSM,MqConst.ROUTING_MSM_ITEM,msmVo);
         }
+
     }
 }

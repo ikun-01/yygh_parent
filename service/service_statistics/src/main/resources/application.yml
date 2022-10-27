@@ -1,0 +1,13 @@
+server:
+  port: 8209
+
+spring:
+  application:
+    name: service-sta
+  profiles:
+    active: dev
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848

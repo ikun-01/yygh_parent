@@ -33,6 +33,27 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+    sentinel:
+      datasource:
+        # 这里datasource后的consumer是数据源名称，可以随便写，推荐使用服务名
+        consumer:
+          nacos:
+            server-addr: 127.0.0.1:8848
+            data-id: ${spring.application.name}-sentinel-rules
+            group-id: SENTINEL_GROUP
+            data-type: json
+            # 规则类型
+            #authority（授权规则）、degrade（降级规则）、flow（流控规则）、
+            #param（热点规则）、system（系统规则）五种规则持久化到Nacos中
+            rule-type: flow
+      transport:
+        # 启动该服务，会在应用程序的相应服务器上启动HTTP Server，并且该服务器将与Sentinel dashboard进行交互
+        port: 8719
+        # 指定dashboard地址
+        dashboard: 127.0.0.1:8088
+
+
+
 
   #rabbitmq地址
   #spring.rabbitmq.host=192.168.44.165
@@ -49,3 +70,17 @@ spring:
   redis:
     host: 192.168.11.11
     port: 6666
+
+
+weixin:
+  pay:
+    #关联的公众号appid
+    appid: wx74862e0dfcf69954
+    #商户号
+    partner: 1558950191
+    #商户key
+    partnerkey: T6m9iK73b0kn9g5v426MKfHQH7X8rKwb
+  cert: C:\\wx\\apiclient_cert.p12
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml

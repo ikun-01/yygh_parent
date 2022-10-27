@@ -17,6 +17,13 @@
     </properties>
 
     <dependencies>
+        <!--微信支付-->
+        <dependency>
+            <groupId>com.github.wxpay</groupId>
+            <artifactId>wxpay-sdk</artifactId>
+            <version>0.0.3</version>
+        </dependency>
+
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
@@ -42,5 +49,13 @@
             <artifactId>rabbit_util</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <!--流控规则持久化-->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-datasource-nacos</artifactId>
+            <version>1.7.0</version>
+        </dependency>
+
     </dependencies>
 </project>

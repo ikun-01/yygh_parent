@@ -16,4 +16,11 @@ public class HospitalSetServiceImpl extends ServiceImpl<HospitalSetMapper,Hospit
         queryWrapper.eq("hoscode",hoscode);
         return this.getOne(queryWrapper).getSignKey();
     }
+
+    @Override
+    public HospitalSet getHospitalSet(String hoscode) {
+        QueryWrapper<HospitalSet> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("hoscode",hoscode);
+        return this.getOne(queryWrapper);
+    }
 }

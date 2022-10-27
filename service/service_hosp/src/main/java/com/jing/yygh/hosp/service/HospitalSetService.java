@@ -10,4 +10,6 @@ public interface HospitalSetService extends IService<HospitalSet> {
      * @return
      */
     String getSignKey(String hoscode);
+
+    HospitalSet getHospitalSet(String hoscode);
 }

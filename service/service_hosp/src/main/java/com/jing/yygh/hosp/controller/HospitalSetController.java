@@ -178,4 +178,10 @@ public class HospitalSetController {
         return b ? R.ok() : R.error();
     }
 
+    @ApiOperation("根据医院编号获取医院设置信息 供其他服务远程调用")
+    @GetMapping("/getHospitalSetByHoscode/{hoscode}")
+    public HospitalSet getHospitalSet(@PathVariable("hoscode") String hoscode){
+        return hospitalSetService.getHospitalSet(hoscode);
+    }
+
 }
